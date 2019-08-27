@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="cart2.css">
+<script src="myscript.js"></script>
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src="http://www.jeasyui.com/easyui/demo/demo.css"></script>
+<script src="http://www.jeasyui.com/easyui/themes/icon.css"></script>
+<script src="http://github.com/downloads/SteveSanderson/knockout/knockout-2.0.0.js"></script>
+<script src="http://www.jeasyui.com/easyui/themes/default/easyui.css"></script>
+<script src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+<title>Shopping Cart</title>
+<script>
+ $(window).load(function(){
+$.ajax({
+   url: "https://api.myjson.com/bins/qhnfp",
+   success: function(data) {
+       console.log('result' + JSON.stringify(data));
+          $.each(data, function(i) {
+     console.log('JSON Item' + i, data[i]);
+
+       });
+$('.image0').html('<img src="' + data[0].img_url + '" />'); 
+$('.discount0').append(data[0].discount+ '%off');
+$('.name0').append(data[0].name);
+$('.price0').append(data[0].price);
+$('.price00').append(data[0].price*(1-data[0].discount/100)+ ' price after discount');
+
+$('.image1').html('<img src="' + data[1].img_url + '" />'); 
+$('.discount1').append(data[1].discount+ '%off');
+$('.name1').append(data[1].name);
+$('.price1').append(data[1].price);
+$('.price01').append(data[1].price*(1-data[1].discount/100)+ ' price after discount');
+
+$('.image2').html('<img src="' + data[2].img_url + '" />'); 
+$('.discount2').append(data[2].discount+ '%off');
+$('.name2').append(data[2].name);
+$('.price2').append(data[2].price);
+$('.price02').append(data[2].price*(1-data[2].discount/100)+ ' price after discount');
+
+$('.image3').html('<img src="' + data[3].img_url + '" />'); 
+$('.discount3').append(data[3].discount+ '%off');
+$('.name3').append(data[3].name);
+$('.price3').append(data[3].price);
+$('.price03').append(data[3].price*(1-data[3].discount/100)+ ' price after discount');
+
+$('.image4').html('<img src="' + data[3].img_url + '" />'); 
+$('.discount4').append(data[4].discount+ '%off');
+$('.name4').append(data[4].name);
+$('.price4').append(data[4].price);
+$('.price04').append(data[4].price*(1-data[4].discount/100)+ ' price after discount');
+
+$('.image5').html('<img src="' + data[5].img_url + '" />'); 
+$('.discount5').append(data[5].discount+ '%off');
+$('.name5').append(data[5].name);
+$('.price5').append(data[5].price);
+$('.price05').append(data[5].price*(1-data[5].discount/100)+ ' price after discount');
+
+$('.image6').html('<img src="' + data[6].img_url + '" />'); 
+$('.discount6').append(data[6].discount+ '%off');
+$('.name6').append(data[6].name);
+$('.price6').append(data[6].price);
+$('.price06').append(data[6].price*(1-data[6].discount/100)+ ' price after discount');
+
+$('.image7').html('<img src="' + data[7].img_url + '" />'); 
+$('.discount7').append(data[7].discount+ '%off');
+$('.name7').append(data[7].name);
+$('.price7').append(data[7].price);
+$('.price07').append(data[7].price*(1-data[7].discount/100)+ ' price after discount');
+   },
+   error: function(error) {
+       console.log('error' + error);
+   }
+});
+
+var data = {
+  "total": 0,
+  "rows": []
+};
+
+var totalCost = 0;
+
+var viewModel = {
+  cartItems: ko.observableArray(),
+  deleteItem: function() {
+    viewModel.cartItems.remove(this);
+    var rowCount = document.getElementById("cartcontent1").getElementsByTagName("TR").length;
+    document.getElementById("Total").innerHTML = rowCount;
+
+  },
+}
+
+
+viewModel.total = ko.computed(function() {
+    var sum = 0;
+    ko.utils.arrayForEach(this.cartItems(), function(item) {
+      sum += item.subTotal();
+
+    });
+
+    return sum;
+  },
+
+
+  viewModel);
+
+function item(name, price,discount) {
+   var self = this;
+    self.name = name;
+    self.qty = ko.observable(1);
+    self.discount=discount;
+    self.price = price;
+    self.subTotal = ko.computed(function() {
+        return self.qty() * self.price;
+  });
+
+
+}
+
+
+$(function() {
+
+  ko.applyBindings(viewModel);
+
+  $('.item .add-to-cart').click(function() {
+    addToCart($(this).parent());
+  });
+
+  function addToCart(source) {
+    var name = source.find('p:eq(0)').html();
+    var price = source.find('p:eq(3)').html();
+    var discount = source.find('p:eq(2)').html();
+    var cartItem = new item(name, parseFloat(price.split('$')[1]));
+
+    // check duplicate
+    var match = ko.utils.arrayFirst(viewModel.cartItems(), function(item) {
+      return item.name == name;
+    });
+    if (match) {
+
+      match.qty(match.qty() + 1);
+    } else {
+      viewModel.cartItems.push(cartItem);
+      var rowCount = document.getElementById("cartcontent1").getElementsByTagName("TR").length;
+      document.getElementById("Total").innerHTML = rowCount;
+    }
+  }
+});
+
+ });
+</script>
+</head>
+<body>
+
+  <div id="Totalheading" class="top-total">Total Products In Cart = <span id="Total" style="font-weight:bold;">0</span> </div> 
+
+
+<ul class="products">
+        <li class="item">
+              
+                <section class="image0"></section>
+                <div>
+                    <p class="name0"></p>
+                    <p class="price0">$</p>
+                    <p class="discount0"></p>
+                    <p class="price00">$</p>
+                </div>
+                <button class="add-to-cart">Add To Cart</button>
+        </li>
+        <li class="item">
+                <section class="image1"></section>
+                   <p class="name1"></p>
+                    <p class="price1">$</p>
+                    <p class="discount1"></p>
+                    <p class="price01">$</p>
+                </div>
+                <button class="add-to-cart">Add To cart</button>
+ 
+        </li>
+        <li class="item">
+
+              <section class="image2"></section>
+                <div>
+                   <p class="name2"></p>
+                    <p class="price2">$</p>
+                  <p class="discount2"></p>
+                  <p class="price02">$</p>
+                </div>
+                <button class="add-to-cart">Add To Cart</button>
+
+        </li>
+        <li  class="item">
+
+                <section class="image3"></section>
+                <div>
+                    <p class="name3"></p>
+                    <p class="price3">$</p>
+                    <p class="discount3"></p>
+                    <p class="price03">$</p>
+                </div>
+           <button class="add-to-cart">Add To Cart</button>
+        </li>
+        <li class="item">
+
+                <section class="image4"></section>
+                <div>
+                    <p class="name4"></p>
+                    <p class="price4">$</p>
+                    <p class="discount4"></p>
+                    <p class="price04">$</p>
+                </div>
+                <button class="add-to-cart">Add To Cart</button>
+  
+        </li>
+        <li  class="item">
+     
+               <section class="image5"></section>
+                <div>
+                     <p class="name5"></p>
+                    <p class="price5">$</p>
+                    <p class="discount5"></p>
+                    <p class="price05">$</p>
+                </div>
+                <button class="add-to-cart">Add To Cart</button>
+     
+        </li>
+<li  class="item">
+     
+               <section class="image6"></section>
+                <div>
+                     <p class="name6"></p>
+                    <p class="price6">$</p>
+                   <p class="discount6"></p>
+                   <p class="price06">$</p>
+                </div>
+                <button class="add-to-cart">Add To Cart</button>
+     
+        </li>
+<li  class="item">
+     
+               <section class="image7"></section>
+                <div>
+                     <p class="name7"></p>
+                    <p class="price7">$</p>
+                    <p class="discount7"></p>
+                    <p class="price07">$</p>
+                </div>
+                <button class="add-to-cart">Add To Cart</button>
+     
+        </li>
+    </ul>
+
+<div class="cart">  
+    <h1>Shopping Cart</h1>  
+    <table id="cartcontent" style="width:300px;height:auto;">  
+        <thead>  
+            <tr class="space-main">  
+                <th field="name" class="space" width=140>Name</th>  
+                <th field="quantity" class="space" width=40 align="right">Quantity</th>  
+                <th field="price" class="space" width=40 align="right">Price</th> 
+                
+                <th field="remove" class="space" width=30 align="right"></th>         
+            </tr>  
+        </thead> 
+         </table>
+         <table id="cartcontent1" style="width:300px;height:auto;">  
+        <tbody data-bind="foreach:cartItems">
+            <th>
+                <td data-bind="text:name"></td>
+                <td ><input type="text" class="size" data-bind="value:qty" /></td>
+                <td data-bind="text:price"></td>
+                <td data-bind="text:discount"></td>
+                <td><button data-bind="click:$parent.deleteItem">&times;</button></td>
+            </th>
+        </tbody>
+    </table>  
+    <p class="total">Total: $<span data-bind="text:total"></span></p>    
+</div>  
+</body>
+</html>
